@@ -18,6 +18,7 @@ public class OneStopShoppingController {
 
     @GetMapping
     public List<Booking> getAllBookings() {
+    	System.out.println("hello");
         return bookingRepository.findAll();
     }
 }
