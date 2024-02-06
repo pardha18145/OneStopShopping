@@ -9,12 +9,11 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import lombok.Getter;
-import lombok.Setter;
+import jakarta.persistence.Table;
+import lombok.Data;
 
 @Entity
-@Getter
-@Setter
+@Data
 public class Orders {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,5 +26,4 @@ public class Orders {
     private LocalDateTime orderDate;
     private BigDecimal totalAmount;
 
-    // getters and setters
 }
