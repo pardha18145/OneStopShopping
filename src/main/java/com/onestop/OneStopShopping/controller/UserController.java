@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.onestop.OneStopShopping.model.Orders;
+import com.onestop.OneStopShopping.model.OrdersDTO;
+import com.onestop.OneStopShopping.model.UserDTO;
 import com.onestop.OneStopShopping.model.Users;
 import com.onestop.OneStopShopping.repository.UserService;
 
@@ -25,30 +28,36 @@ public class UserController {
 
  @Autowired
  private UserService userService;
+ 
+ @GetMapping("/id/{id}")
+ @PreAuthorize("hasRole('customer')")
+ public ResponseEntity<Users> getUserById(@PathVariable Long id) {
+     Users user = userService.findByUserId(id);
+     return ResponseEntity.ok(user);
+ }
 
  @GetMapping("/{username}")
- @PreAuthorize("hasRole('USER')")
+ @PreAuthorize("hasRole('admin')")
  public ResponseEntity<Users> getUserByUsername(@PathVariable String username) {
      Users user = userService.findByUsername(username);
      return ResponseEntity.ok(user);
  }
  
  @GetMapping("/all")
- @PreAuthorize("hasRole('USER')")
+ @PreAuthorize("hasRole('admin')")
  public ResponseEntity<List<Users>> getAllUsers() {
      List<Users> users = userService.getAllUsers();
      return ResponseEntity.ok(users);
  }
 
  @PostMapping("/create")
- @PreAuthorize("hasRole('ADMIN')")
  public ResponseEntity<Users> createUser(@RequestBody Users user) {
      Users createdUser = userService.createUser(user);
      return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
  }
 
  @PutMapping("/{id}")
- @PreAuthorize("hasRole('ADMIN')")
+ @PreAuthorize("hasRole('admin')")
  public ResponseEntity<Users> updateUser(@PathVariable Long id, @RequestBody Users user) {
      Users updatedUser = userService.updateUser(id, user);
      if (updatedUser != null) {
@@ -59,10 +68,14 @@ public class UserController {
  }
 
  @DeleteMapping("/{id}")
- @PreAuthorize("hasRole('USER')")
+ @PreAuthorize("hasRole('admin')")
  public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
      userService.deleteUser(id);
      return ResponseEntity.noContent().build();
  }
  
 }
+
+
+
+

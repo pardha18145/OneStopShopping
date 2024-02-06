@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.onestop.OneStopShopping.model.Orders;
+import com.onestop.OneStopShopping.model.OrdersDTO;
 import com.onestop.OneStopShopping.repository.OrderService;
 
 //OrderController.java
@@ -28,18 +30,29 @@ public class OrderController {
  @Autowired
  private OrderService orderService;
 
+ @PreAuthorize("hasRole('customer')")
  @GetMapping("/user/{userId}")
  public ResponseEntity<List<Orders>> getOrdersByUserId(@PathVariable Long userId) {
      List<Orders> orders = orderService.getOrdersByUserId(userId);
      return ResponseEntity.ok(orders);
  }
+ 
+ @PreAuthorize("hasRole('admin')")
+ @GetMapping("/all")
+ public ResponseEntity<List<Orders>> getAllOrders() {
+	 System.out.println("getting all orders");
+     List<Orders> orders = orderService.getAllOrders();
+     return ResponseEntity.ok(orders);
+ }
 
+ @PreAuthorize("hasRole('admin')")
  @PostMapping("/create")
  public ResponseEntity<String> createOrder(@RequestBody Orders order) {
      orderService.saveOrder(order);
      return ResponseEntity.ok("Order created successfully");
  }
  
+ @PreAuthorize("hasRole('customer')")
  @GetMapping("/{orderId}")
  public ResponseEntity<Orders> getOrderById(@PathVariable Long orderId) {
      Orders order = orderService.getOrderById(orderId);
@@ -68,12 +81,6 @@ public class OrderController {
      }
  }
 
- @GetMapping("/all")
- public ResponseEntity<List<Orders>> getAllOrders() {
-	 System.out.println("getting all orders");
-     List<Orders> orders = orderService.getAllOrders();
-     return ResponseEntity.ok(orders);
- }
 
  @GetMapping("/dateRange")
  public ResponseEntity<List<Orders>> getOrdersByDateRange(
